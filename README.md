@@ -1,5 +1,5 @@
 # [ECCV 2020] Multi-Loss Rebalancing Algorithm for Monocular Depth Estimation
-![lee2020multi_loss_rebalancing_depth](img/intro.PNG)
+![lee2020multi_loss_rebalancing_depth](img/intro.png)
 
 ## Paper
 
