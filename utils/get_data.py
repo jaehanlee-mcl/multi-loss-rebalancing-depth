@@ -1,26 +1,53 @@
-from utils.data import getTestDataPath, loadZipToMem, ToTensor_with_RandomZoom, depthDatasetMemoryTrain
+from utils.data import loadZipToMem, ToTensor_with_RandomZoom, depthDatasetMemoryTrain
 from torchvision import transforms
 from torch.utils.data import DataLoader
 import numpy as np
 from PIL import Image
 import collections
+import torch
+from utils.transform import *
 
 try:
     import accimage
 except ImportError:
     accimage =None
 
-def getTestingData(batch_size, test_data_use):
-    test_dataset_path, test_dataset_csv_list = getTestDataPath()
+def getTrainingData(batch_size, train_dataset_path, train_dataset_csv_list):
+    data_temp, train_temp = loadZipToMem(train_dataset_path, train_dataset_csv_list)
+    data = data_temp.copy()
+    train = train_temp
 
-    use_NYUv2_test = test_data_use['NYUv2_test']
-    dataset_path_NYUv2_test = test_dataset_path['NYUv2_test']
-    dataset_csv_NYUv2_test = test_dataset_csv_list['NYUv2_test']
+    __imagenet_pca = {
+        'eigval': torch.Tensor([0.2175, 0.0188, 0.0045]),
+        'eigvec': torch.Tensor([
+            [-0.5675, 0.7192, 0.4009],
+            [-0.5808, -0.0045, -0.8140],
+            [-0.5836, -0.6948, 0.4203],
+        ])
+    }
+    __imagenet_stats = {'mean': [0.485, 0.456, 0.406],
+                        'std': [0.229, 0.224, 0.225]}
 
-    if use_NYUv2_test == True:
-        data_temp, test_temp = loadZipToMem(dataset_path_NYUv2_test, dataset_csv_NYUv2_test)
-        data = data_temp.copy()
-        test = test_temp
+    transformed_training = transforms.Compose([
+        Scale(288),
+        RandomHorizontalFlip(),
+        RandomRotate(5),
+        #RandomChannelSwap(0.5),
+        ToTensor_with_RandomZoom(ratio=1.00),
+        Lighting(0.1, __imagenet_pca['eigval'], __imagenet_pca['eigvec']),
+        ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, ),
+        Normalize(__imagenet_stats['mean'],
+                  __imagenet_stats['std'])
+        ])
+
+    transformed_training = depthDatasetMemoryTrain(data, train, transform=transformed_training)
+
+    return DataLoader(transformed_training, batch_size, shuffle=True), len(train)
+
+def getTestingData(batch_size, test_dataset_path, test_dataset_csv_list):
+    data_temp, test_temp = loadZipToMem(test_dataset_path, test_dataset_csv_list)
+    data = data_temp.copy()
+    test = test_temp
 
     __imagenet_stats = {'mean': [0.485, 0.456, 0.406],
                         'std': [0.229, 0.224, 0.225]}

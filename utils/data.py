@@ -150,11 +150,3 @@ class ToTensor_with_RandomZoom(object):
             return img.float().div(255)
         else:
             return img
-
-def getTestDataPath():
-    # path for rr/rh
-    test_dataset_path = {'NYUv2_test': "D:\dataset\depth_map_estimation/NYUv2/test.zip"}
-    # location of list(.csv) file
-    test_dataset_csv_list = {'NYUv2_test': 'test/test.csv'}
-    return test_dataset_path, test_dataset_csv_list
-
