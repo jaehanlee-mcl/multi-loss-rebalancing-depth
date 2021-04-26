@@ -26,7 +26,7 @@ All depth maps are saved as 16bit png files.
 
 Depths are mapped by the following formula: depth = double(value) / (2^16 - 1) * 10
 
-- 654 RGBD pairs for evaluation: [test654.zip](https://drive.google.com/file/d/1scqBb4kCB82ssDoO8UfvrWUubYH_hjXs/view?usp=sharing)
+- 654 RGBD pairs for evaluation: [test654.zip](https://drive.google.com/file/d/1JYjSgf5Fn6eg2gJkqmuBZXI2xMTdyIxX/view?usp=sharing)
 
 - 795 RGBD pairs for training: [train795.zip](https://drive.google.com/file/d/1VNRsXzc0MMjjXLdJpcwBTh1eosif7orU/view?usp=sharing)
 
